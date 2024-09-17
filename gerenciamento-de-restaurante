@@ -1,0 +1,98 @@
+set sql_safe_updates = 0;
+
+drop database if exists restaurante_db;
+
+create database restaurante_db;
+
+use restaurante_db;
+
+create table clientes (
+    cliente_id int auto_increment primary key,
+    nome varchar(100) not null,
+    telefone varchar(100) not null,
+    email varchar(100) not null
+);
+
+create table mesas (
+    mesa_id int auto_increment primary key,
+    numero_mesa int not null,
+    capacidade int not null
+);
+
+create table pedidos (
+    pedido_id int auto_increment primary key,
+    cliente_id int,
+    mesa_id int,
+    data_pedido time,
+    total decimal(10, 2),
+    foreign key (cliente_id) references clientes(cliente_id),
+    foreign key (mesa_id) references mesas(mesa_id)
+);
+
+create table itens_pedido (
+    item_id int auto_increment primary key,
+    pedido_id int,
+    descricao_item varchar(200),
+    quantidade int,
+    preco_unitario decimal(10, 2),
+    foreign key (pedido_id) references pedidos(pedido_id)
+);
+
+insert into clientes (nome, telefone, email) values 
+('joão silva', '1234-5678', 'joao.silva@example.com'),
+('maria oliveira', '2345-6789', 'maria.oliveira@example.com');
+
+insert into mesas (numero_mesa, capacidade) values 
+(1, 4),
+(2, 2);
+
+insert into pedidos (cliente_id, mesa_id, data_pedido, total) values 
+(1, 1, '15:00:00', 100.00),
+(2, 2, '18:30:00', 50.00);
+
+insert into itens_pedido (pedido_id, descricao_item, quantidade, preco_unitario) values 
+(1, 'pizza margherita', 1, 40.00),
+(1, 'refrigerante', 2, 5.00),
+(2, 'hambúrguer', 1, 30.00);
+
+update clientes
+set telefone = '9999-9999'
+where cliente_id = 1;
+
+update mesas
+set capacidade = 6
+where mesa_id = 1;
+
+update pedidos
+set total = 120.00
+where pedido_id = 1;
+
+update itens_pedido
+set quantidade = 3
+where item_id = 2;
+
+select * from clientes;
+
+select * from mesas;
+
+select * from pedidos;
+
+select * from itens_pedido
+where pedido_id = 1;
+
+select p.pedido_id, c.nome as cliente_nome, m.numero_mesa, p.data_pedido, p.total
+from pedidos p
+join clientes c on p.cliente_id = c.cliente_id
+join mesas m on p.mesa_id = m.mesa_id;
+
+delete from itens_pedido
+where item_id = 2;
+
+delete from pedidos
+where pedido_id = 2;
+
+delete from mesas
+where mesa_id = 2;
+
+delete from clientes
+where cliente_id = 2;
